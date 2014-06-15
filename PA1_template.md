@@ -4,10 +4,10 @@
 ## Loading and preprocessing the data
 
 ```r
-fileroute <- "C:/Users/anselm/Google Drive/Research/WorkSpace/R/coursera/reprodcible research/activity.csv"
 
-activity <- read.csv(fileroute, header = TRUE, colClasses = c("numeric", "Date", 
-    "numeric"))
+unzip(zipfile = "activity.zip", overwrite = TRUE, unzip = "internal")
+activity <- read.csv("activity.csv", header = TRUE, colClasses = c("numeric", 
+    "Date", "numeric"))
 ```
 
 
@@ -38,6 +38,7 @@ mean.for.days <- mean(steps.sum$total, na.rm = TRUE)
 median.for.days <- median(steps.sum$total, na.rm = TRUE)
 ```
 
+mean is 9354.2295 and median is 1.0395 &times; 10<sup>4</sup>
 
 ## What is the average daily activity pattern?
 **1.Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)**
@@ -49,8 +50,7 @@ steps.sum.day.interval <- ddply(activity, "interval", summarise, average = mean(
 figmean <- ggplot(steps.sum.day.interval, aes(x = interval, y = average)) + 
     geom_line()
 
-figmean + theme(aspect.ratio = 1/4) + labs(x = "average steps", y = "5 min interval", 
-    title = "Averge number of steps per interval")
+figmean + labs(x = "average steps", y = "5 min interval", title = "Averge number of steps per interval")
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
@@ -58,39 +58,19 @@ figmean + theme(aspect.ratio = 1/4) + labs(x = "average steps", y = "5 min inter
 **2.Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?**
 
 ```r
-maxaverge <- which(steps.sum.day.interval$average == max(steps.sum.day.interval$average))
+maxaverage <- which(steps.sum.day.interval$average == max(steps.sum.day.interval$average))
 interval.max <- steps.sum.day.interval$interval[maxaverage]
 ```
 
-```
-## Error: object 'maxaverage' not found
-```
-
-the 5 min interval containing the maximum is: 
-
-```
-
-Error in eval(expr, envir, enclos) : object 'interval.max' not found
-
-```
-
-
+the 5 min interval containing the maximum is: 835
 ## Imputing missing values
 **1.Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)**
 
 ```r
-totalmissig <- sum(colSums(is.na(activity)))
+totalmissing <- sum(colSums(is.na(activity)))
 ```
 
-total numberof missing value: 
-
-```
-
-Error in eval(expr, envir, enclos) : object 'totalmissing' not found
-
-```
-
-
+total numberof missing value: 2304
 
 **2.Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.**
 
@@ -131,6 +111,7 @@ mean.for.days2 <- mean(steps.sum2$total, na.rm = TRUE)
 median.for.days2 <- median(steps.sum2$total, na.rm = TRUE)
 ```
 
+imputed data's mean is 1.0766 &times; 10<sup>4</sup> and median is 1.0766 &times; 10<sup>4</sup>
 *Do these values differ from the estimates from the first part of the assignment?*
 yes
 *What is the impact of imputing missing data on the estimates of the total daily number of steps?*
@@ -151,8 +132,7 @@ imput.activity$day.type <- as.factor(ifelse(wdays == "Saturday" | wdays == "Sund
 steps.interval <- ddply(imput.activity, .(interval, day.type), summarise, average = mean(steps, 
     na.rm = T))
 
-fig3 <- ggplot(steps.interval, aes(x = interval, y = average)) + geom_line() + 
-    theme(aspect.ratio = 1/4)
+fig3 <- ggplot(steps.interval, aes(x = interval, y = average)) + geom_line()
 
 fig3 + facet_wrap(~day.type, ncol = 1)
 ```
